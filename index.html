@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cafe Roo — Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<section class="hero" id="top">
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+  <div class="badge">Est. 2019 · All Day Dining</div>
+  <h1>Cafe <em>Roo</em></h1>
+  <p class="hero-sub">Good Food · Good Coffee · Good Vibes</p>
+  <div class="hero-divider"><span>✦</span></div>
+  <div class="hero-info">
+    <div><strong>Hours</strong>7 AM – 9 PM Daily</div>
+    <div><strong>Location</strong>508 Blumentritt Rd Manila</div>
+    <div><strong>Contact</strong>(02) 8123-4567</div>
+  </div>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('menu-start').scrollIntoView({behavior:'smooth'})">
+      ☕ View Menu
+    </button>
+    <button class="btn-ghost" onclick="app.ui.toggleSeatingModal(true)">
+      🪑 <span id="seat-count-btn">Seat Available</span>
+    </button>
+  </div>
+</section>
+ 
+<nav class="sticky-nav" id="menu-start">
+  <div class="nav-cats">
+    <button class="cat-btn active" onclick="setCategory('breakfast',this)">Breakfast</button>
+    <button class="cat-btn" onclick="setCategory('allday',this)">All Day</button>
+    <button class="cat-btn" onclick="setCategory('mains',this)">Mains</button>
+    <button class="cat-btn" onclick="setCategory('sweets',this)">Sweets</button>
+    <button class="cat-btn" onclick="setCategory('drinks',this)">Drinks</button>
+  </div>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 Order
+    <span class="cart-badge" id="cart-badge">0</span>
+    <span class="queue-info" id="queue-info"></span>
+  </button>
+</nav>
+ 
+<main class="menu-body">
+ 
+  <div class="filter-row">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-chip active" onclick="setFilter('all',this)">All Items</button>
+    <button class="filter-chip" onclick="setFilter('popular',this)">★ Popular</button>
+    <button class="filter-chip" onclick="setFilter('vegan',this)">🌿 Vegan / Veg</button>
+    <button class="filter-chip" onclick="setFilter('new',this)">✦ New</button>
+  </div>
+ 
+  <div class="special-card" data-filter="popular">
+    <div style="position:relative;z-index:1;flex:1">
+      <p class="special-eyebrow">✦ Today's Special</p>
+      <h3 class="special-title">Truffle Scrambled<br>Eggs on Sourdough</h3>
+      <p class="special-desc">Three free-range eggs whipped with crème fraîche, finished with black truffle oil, fresh chives, and served on thick-cut housemade sourdough toast.</p>
+      <div class="special-actions">
+        <div class="qty-ctrl" id="special-qty-ctrl">
+          <button type="button" class="qty-btn" onclick="changeQty('special',-1)">−</button>
+          <span class="qty-num" id="special-qty-num">1</span>
+          <button type="button" class="qty-btn" onclick="changeQty('special',1)">+</button>
+        </div>
+        <button type="button" class="add-btn" id="special-add-btn" onclick="app.addToCart('special-item', 'Truffle Scrambled Eggs', 285)">
+          <span class="plus">+</span> Add to Order
+        </button>
+      </div>
+    </div>
+    <div class="special-price-block">
+      <p class="special-price-label">From</p>
+      <p class="special-price"><sup>₱</sup>285</p>
+    </div>
+  </div>
+ 
+  <section class="menu-section" id="breakfast">
+    <div class="section-head">
+      <div class="section-num">01</div>
+      <div class="section-title-wrap">
+        <h2>Breakfast</h2>
+        <p>Served 7:00 AM – 11:30 AM</p>
+      </div>
+    </div>
+    <div class="item-grid" id="grid-breakfast"></div>
+  </section>
+ 
+  <section class="menu-section" id="allday">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div class="section-title-wrap">
+        <h2>All Day Bites</h2>
+        <p>Available from open until close</p>
+      </div>
+    </div>
+    <div class="item-grid" id="grid-allday"></div>
+  </section>
+ 
+  <section class="menu-section" id="mains">
+    <div class="section-head">
+      <div class="section-num">03</div>
+      <div class="section-title-wrap">
+        <h2>Mains</h2>
+        <p>Served from 11:30 AM onwards</p>
+      </div>
+    </div>
+    <div class="item-grid" id="grid-mains"></div>
+  </section>
+ 
+  <section class="menu-section" id="sweets">
+    <div class="section-head">
+      <div class="section-num">04</div>
+      <div class="section-title-wrap">
+        <h2>Sweets & Pastries</h2>
+        <p>Baked fresh in-house every morning</p>
+      </div>
+    </div>
+    <div class="item-grid" id="grid-sweets"></div>
+  </section>
+ 
+  <section class="menu-section" id="drinks">
+    <div class="section-head">
+      <div class="section-num">05</div>
+      <div class="section-title-wrap">
+        <h2>Drinks</h2>
+        <p>Specialty coffee · Teas · Cold drinks</p>
+      </div>
+    </div>
+    <div class="drinks-grid" id="grid-drinks"></div>
+  </section>
+ 
+</main>
+ 
+<footer class="site-footer">
+  <p class="footer-logo">Cafe Roo</p>
+  <p class="footer-info">
+    123 Roo Street, Your Neighborhood, Manila<br>
+    hello@caferoo.ph &nbsp;·&nbsp; (02) 8123-4567
+  </p>
+  <div class="footer-hours">
+    <div><strong>Mon – Fri</strong>7:00 AM – 9:00 PM</div>
+    <div><strong>Saturday</strong>8:00 AM – 10:00 PM</div>
+    <div><strong>Sunday</strong>8:00 AM – 8:00 PM</div>
+  </div>
+  <p style="font-size:12px;color:var(--text-dim)">Prices inclusive of VAT · Menu changes seasonally</p>
+</footer>
+ 
+<div class="overlay" id="overlay" onclick="closeCart(); app.ui.toggleSeatingModal(false); app.ui.hideOrderConfirmation();"></div>
+ 
+<div class="cart-drawer" id="cart-drawer">
+  <div class="drawer-head">
+    <div>
+      <h2>Your Order</h2>
+      <p class="queue-position" id="queue-position"></p>
+    </div>
+    <button class="close-btn" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="empty-cart" id="empty-cart">
+      <div class="empty-icon">🛒</div>
+      <p>Your order is empty.<br>Add something delicious!</p>
+    </div>
+  </div>
+ <div class="cart-footer">
+    <div class="subtotal-row">
+      <span class="subtotal-label">Subtotal</span>
+      <span class="subtotal-val" id="subtotal-val">₱0</span>
+    </div>
+    <div class="tax-row">
+      <span class="tax-label">VAT (12%)</span>
+      <span class="tax-val" id="tax-val">₱0</span>
+    </div>
+    <div class="total-row">
+      <span class="total-label">Total</span>
+      <span class="total-val" id="total-val">₱0</span>
+    </div>
+    <div class="estimate-row">
+      <span class="estimate-label">Est. Time</span>
+      <span class="estimate-val" id="estimate-val">0 min</span>
+    </div>
+
+    <div id="seat-selection-ui" style="margin-bottom:12px;"></div>
+
+    <button class="checkout-btn" id="checkout-btn" onclick="placeOrder()" disabled>
+      Place Order →
+    </button>
+    <button class="clear-btn" onclick="clearCart()">Clear order</button>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+
+<div class="order-confirm-modal" id="order-confirm-modal">
+  <div class="ocm-inner">
+    <div class="ocm-icon">🎉</div>
+    <h2 class="ocm-title">Order Placed!</h2>
+    <p class="ocm-sub">You're in the queue</p>
+    <div class="ocm-badge" id="oc-queue">#1</div>
+    <div class="ocm-details">
+      <div class="ocm-row"><span>Location</span><strong id="oc-location">—</strong></div>
+      <div class="ocm-row"><span>Total Paid</span><strong id="oc-total">₱0</strong></div>
+    </div>
+    <p class="ocm-timer-label">Estimated wait shown in the live banner below ↓</p>
+    <button class="checkout-btn" style="margin-top:8px" onclick="app.ui.hideOrderConfirmation()">Got it!</button>
+  </div>
+</div>
+
+<div class="cart-drawer" id="seating-modal" style="width: 600px;">
+  <div class="drawer-head">
+    <div>
+      <h2>Floor Plan</h2>
+      <p class="queue-position">Tap a table to select your seat.</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="clear-btn" style="width:auto;padding:8px 14px;margin:0;font-size:11px;border-color:var(--gold-dim);color:var(--gold);"
+              onclick="app.ui.toggleSeatingModal(false); app.ui.toggleCart(true);">
+        ← Back to Order
+      </button>
+      <button class="close-btn" onclick="app.ui.toggleSeatingModal(false)">✕</button>
+    </div>
+  </div>
+  
+  <div class="cart-items">
+    <div id="floor-plan"></div>
+  </div>
+</div>
+   
+<script src="models.js"></script>
+<script src="managers.js"></script>
+<script src="view.js"></script>
+<script src="controller.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBKHVnaOw_RBd5x3D9f_vbuogMVKJTLSaQ",
+    authDomain: "caferoo-1169c.firebaseapp.com",
+    projectId: "caferoo-1169c",
+    storageBucket: "caferoo-1169c.firebasestorage.app",
+    messagingSenderId: "38154868920",
+    appId: "1:38154868920:web:a686c872a8718ee97cfc4d",
+    measurementId: "G-J9RFPP0HQN"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+
+  // Bind to global scope so controller.js can interact with database operations
+  window.firebaseDB = db;
+  window.dbMethods = { collection, addDoc, serverTimestamp };
+</script>
+</body>
+</html>
