@@ -460,12 +460,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 }
 
 /* ══════════════════════════════════════════
-   FLOOR PLAN — Café Roo Theme
+   FLOOR PLAN — Café Roo (Dark Theme)
    ══════════════════════════════════════════ */
 
-/* Seating modal override — warm parchment interior */
+/* Seating modal — dark surface matching the rest of the UI */
 #seating-modal .cart-items {
-  background: #F0E6CC !important;
+  background: var(--surface) !important;
   padding: 28px 24px !important;
   overflow-y: auto;
 }
@@ -473,37 +473,38 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .floor-plan-wrap {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-/* ── Zone Labels ── */
+/* ── Zone Labels — match cashier pill style ── */
 .fp-zone-label {
   font-family: 'Outfit', sans-serif;
   font-size: 9px;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8B7355;
+  color: var(--gold);
   font-weight: 600;
   margin-bottom: 8px;
-  padding-left: 2px;
-  border-left: 2px solid #C4A265;
-  padding-left: 7px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--surface3);
+  border: 0.5px solid rgba(212,168,83,0.2);
+  text-align: center;
 }
 
 /* ── Cashier Bar ── */
 .fp-cashier {
-  background: linear-gradient(135deg, #1d5f7b 0%, #16495e 100%);
-  color: white;
+  background: var(--surface3);
+  color: var(--gold);
   text-align: center;
   padding: 11px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-family: 'Outfit', sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  box-shadow: 0 3px 12px rgba(29, 95, 123, 0.35);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 0.5px solid rgba(212,168,83,0.2);
   margin-bottom: 4px;
 }
 
@@ -518,7 +519,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .fp-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* ── Legend ── */
@@ -526,12 +527,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   display: flex;
   gap: 16px;
   align-items: center;
-  justify-content: flex-end;
-  padding: 10px 14px;
-  background: rgba(139, 115, 85, 0.08);
+  justify-content: center;
+  padding: 9px 14px;
+  background: var(--surface2);
   border-radius: 8px;
-  border: 1px solid rgba(139, 115, 85, 0.15);
-  margin-bottom: 4px;
+  border: 0.5px solid var(--border);
+  margin-bottom: 2px;
   flex-wrap: wrap;
 }
 
@@ -542,24 +543,24 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   font-family: 'Outfit', sans-serif;
   font-size: 10px;
   font-weight: 500;
-  color: #6B5A42;
+  color: var(--text-dim);
   letter-spacing: 0.5px;
 }
 
 .fp-legend-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 3px;
   flex-shrink: 0;
 }
-.fp-legend-dot.available { background: #6B8F5A; border: 1.5px solid #557344; }
-.fp-legend-dot.occupied  { background: #C4622D; border: 1.5px solid #A04E22; }
-.fp-legend-dot.selected  { background: #D4A853; border: 1.5px solid #B8903A; }
-.fp-legend-dot.bar       { background: #7B6A52; border: 1.5px solid #5E5040; border-radius: 50%; }
+.fp-legend-dot.available { background: rgba(90,122,74,0.5); border: 1px solid rgba(126,175,102,0.5); }
+.fp-legend-dot.occupied  { background: rgba(196,98,45,0.5); border: 1px solid rgba(196,98,45,0.6); }
+.fp-legend-dot.selected  { background: rgba(212,168,83,0.5); border: 1px solid rgba(212,168,83,0.7); }
+.fp-legend-dot.bar       { background: var(--surface3); border: 1px solid var(--border2); border-radius: 50%; }
 
 /* ── Table Nodes — Base ── */
 .table-node {
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -567,130 +568,193 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   justify-content: center;
   font-family: 'Outfit', sans-serif;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.3px;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease, border-color 0.2s;
   position: relative;
   user-select: none;
-  border: none;
 }
 
 .table-node:hover:not(.occupied) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  transform: translateY(-1px);
 }
-.table-node:active:not(.occupied) { transform: scale(0.95); }
+.table-node:active:not(.occupied) { transform: scale(0.97); }
 
-/* ── Available — warm sage green ── */
+/* ── Available ── */
 .table-node.available {
-  background: linear-gradient(145deg, #7EA86A 0%, #5E8A4C 100%);
-  color: #fff;
-  box-shadow: 0 3px 10px rgba(94, 138, 76, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
-  border-bottom: 3px solid #4A7039;
+  background: var(--surface2);
+  color: var(--text-muted);
+  border: 0.5px solid var(--border2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.table-node.available::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--green-light);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.85;
+}
+.table-node.available:hover {
+  border-color: rgba(126,175,102,0.5);
+  color: var(--green-light);
+  background: var(--surface3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
-/* ── Occupied — warm terracotta ── */
+/* ── Occupied ── */
 .table-node.occupied {
-  background: linear-gradient(145deg, #C96A40 0%, #A84F28 100%);
-  color: rgba(255,255,255,0.95);
-  box-shadow: 0 3px 10px rgba(168, 79, 40, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 0.5px solid rgba(196,98,45,0.25);
   cursor: not-allowed;
-  border-bottom: 3px solid #8A3D1C;
+  opacity: 0.7;
+  overflow: hidden;
 }
-
+.table-node.occupied::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--terra-light);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.85;
+}
 .table-node.occupied::after {
   content: '✕';
   position: absolute;
   top: 4px;
   right: 6px;
   font-size: 8px;
-  opacity: 0.6;
+  color: var(--terra-light);
+  opacity: 0.7;
   font-weight: 400;
 }
 
-/* ── Selected — gold ── */
+/* ── Selected ── */
 .table-node.selected {
-  background: linear-gradient(145deg, #E0B660 0%, #C49640 100%);
-  color: #3A2A0A;
-  box-shadow: 0 0 0 2.5px #F0CB7A, 0 6px 24px rgba(212, 168, 83, 0.5);
-  transform: translateY(-2px) scale(1.04);
-  border-bottom: 3px solid #A07A28;
+  background: var(--gold-dim);
+  color: var(--gold);
+  border: 0.5px solid rgba(212,168,83,0.5);
+  box-shadow: 0 0 0 1.5px rgba(212,168,83,0.3), 0 4px 20px rgba(212,168,83,0.15);
+  transform: translateY(-1px);
+  overflow: hidden;
 }
-
 .table-node.selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--gold);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.9;
+}
+.table-node.selected::after {
   content: '✓';
   position: absolute;
   top: 4px;
   right: 6px;
   font-size: 9px;
+  color: var(--gold);
   opacity: 0.8;
   font-weight: 700;
 }
+
+/* ── Bar stool corners — circular so use a dot instead of clip-path ── */
+.table-bar.available::before,
+.table-bar.occupied::before,
+.table-bar.selected::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  clip-path: none;
+  top: 3px;
+  left: 3px;
+}
+.table-bar.available::before  { background: var(--green-light); }
+.table-bar.occupied::before   { background: var(--terra-light); }
+.table-bar.selected::before   { background: var(--gold); }
 
 /* ── Table Shapes ── */
 .table-small {
   width: 84px;
   height: 62px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .table-large {
   width: 100%;
-  height: 60px;
-  border-radius: 10px;
+  height: 58px;
+  border-radius: 8px;
 }
 
-/* Bar stools — round, different vibe */
+/* Bar stools — round */
 .table-bar {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   font-size: 10px;
 }
 
 .table-bar.available {
-  background: radial-gradient(circle at 40% 35%, #9E8C72, #6B5A42);
-  box-shadow: 0 3px 10px rgba(107, 90, 66, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
-  border-bottom: 3px solid #4E4030;
+  background: var(--surface2);
+  border: 0.5px solid var(--border2);
+  color: var(--text-dim);
+  overflow: hidden;
+}
+.table-bar.available:hover {
+  border-color: rgba(126,175,102,0.5);
+  color: var(--green-light);
+  background: var(--surface3);
 }
 .table-bar.occupied {
-  background: radial-gradient(circle at 40% 35%, #C96A40, #A84F28);
-  border-bottom: 3px solid #8A3D1C;
+  background: var(--surface2);
+  border: 0.5px solid rgba(196,98,45,0.25);
+  color: var(--text-dim);
+  opacity: 0.7;
+  overflow: hidden;
 }
 .table-bar.selected {
-  background: radial-gradient(circle at 40% 35%, #E0B660, #C49640);
-  color: #3A2A0A;
-  box-shadow: 0 0 0 2.5px #F0CB7A, 0 6px 24px rgba(212, 168, 83, 0.5);
+  background: var(--gold-dim);
+  border: 0.5px solid rgba(212,168,83,0.5);
+  color: var(--gold);
+  box-shadow: 0 0 0 1.5px rgba(212,168,83,0.3);
+  overflow: hidden;
 }
 
 /* ── Timestamp on occupied tables ── */
 .time-stamp {
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 400;
-  margin-top: 3px;
-  opacity: 0.85;
+  margin-top: 2px;
+  opacity: 0.7;
   letter-spacing: 0.2px;
+  color: var(--terra-light);
 }
 
 /* ── Table ID label ── */
 .table-id {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.2px;
   line-height: 1;
 }
 
-/* ── Decorative floor texture overlay ── */
+/* ── Floor texture — clean dark surface, no grid ── */
 .floor-texture {
   position: relative;
-  background:
-    linear-gradient(rgba(139,115,85,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139,115,85,0.04) 1px, transparent 1px),
-    #F0E6CC;
-  background-size: 32px 32px, 32px 32px;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid rgba(139,115,85,0.15);
+  background: var(--surface2);
+  padding: 20px;
+  border-radius: 10px;
+  border: 0.5px solid var(--border);
 }
 /* ── ORDER TYPE TOGGLE ── */
 .order-type-toggle {

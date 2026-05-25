@@ -200,14 +200,14 @@ class UIManager {
     const statsBar = `
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-family:'Outfit',sans-serif;flex-wrap:wrap;">
         <div style="flex:1;min-width:0;">
-          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#8B7355;font-weight:600;margin-bottom:3px;">Table Status</div>
-          <div style="display:flex;gap:3px;">
-            <div style="height:5px;border-radius:3px 0 0 3px;background:#7EA86A;width:${Math.round(available/total*100)}%;transition:width 0.4s;"></div>
-            <div style="height:5px;border-radius:0 3px 3px 0;background:#C96A40;width:${Math.round(occupied/total*100)}%;transition:width 0.4s;"></div>
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,237,216,0.35);font-weight:600;margin-bottom:6px;">Table Status</div>
+          <div style="display:flex;gap:2px;height:4px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.06);">
+            <div style="height:4px;background:rgba(126,175,102,0.55);width:${Math.round(available/total*100)}%;transition:width 0.4s;"></div>
+            <div style="height:4px;background:rgba(196,98,45,0.5);width:${Math.round(occupied/total*100)}%;transition:width 0.4s;"></div>
           </div>
         </div>
-        <div style="font-size:11px;color:#5E8A4C;font-weight:600;white-space:nowrap;">${available} open</div>
-        <div style="font-size:11px;color:#A84F28;font-weight:600;white-space:nowrap;">${occupied} taken</div>
+        <div style="font-size:11px;color:rgba(126,175,102,0.85);font-weight:500;white-space:nowrap;">${available} open</div>
+        <div style="font-size:11px;color:rgba(196,98,45,0.75);font-weight:500;white-space:nowrap;">${occupied} taken</div>
       </div>`;
 
     // Legend
