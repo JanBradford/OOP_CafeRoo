@@ -26,27 +26,31 @@ class UIManager {
 
   createFoodCard(item) {
     const isAvailable = item.stocks > 0;
-    const currentQty = this.preQty[item.id] || 0; 
-      return`
+    const imgHTML = item.image ? `<img src="${item.image}" class="menu-card-img" alt="${item.name}" onerror="this.style.display='none'">` : '';
+
+    return`
       <div class="menu-card" data-id="${item.id}" data-tags="${item.tags.join(' ')}">
-        <div class="card-top">
-          <p class="item-name">${item.name}</p>
-          <p class="item-price">₱${item.price}</p>
-        </div>
-        <p class="item-desc">${item.desc} <span style="color:var(--gold-light); display:block; margin-top:4px; font-size:11px;">${isAvailable ? `Available: ${item.stocks}` : 'NOT AVAILABLE'}</span></p>
-        <div class="card-bottom">
-          <div class="tags">${this.tagHTML(item.tags)}</div>
-          <div class="add-wrap">
-            ${isAvailable ? `
-              <div class="qty-ctrl visible" id="qc-${item.id}">
-                <button class="qty-btn" onclick="app.changePreQty('${item.id}', -1)">−</button>
-                <span class="qty-num" id="qn-${item.id}">0</span>
-                <button class="qty-btn" onclick="app.changePreQty('${item.id}', 1)">+</button>
-              </div>
-              <button class="add-btn" onclick="app.addToCart('${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price})">+ Add</button>
-            ` : `
-              <button class="add-btn" style="background:rgba(208,96,96,0.1); border-color:rgba(208,96,96,0.3); color:#d06060; cursor:not-allowed;" disabled>Not Available</button>
-            `}
+        ${imgHTML}
+        <div class="menu-card-content">
+          <div class="card-top">
+            <p class="item-name">${item.name}</p>
+            <p class="item-price">₱${item.price}</p>
+          </div>
+          <p class="item-desc">${item.desc} <span style="color:var(--gold-light); display:block; margin-top:4px; font-size:11px;">${isAvailable ? `Available: ${item.stocks}` : 'NOT AVAILABLE'}</span></p>
+          <div class="card-bottom">
+            <div class="tags">${this.tagHTML(item.tags)}</div>
+            <div class="add-wrap">
+              ${isAvailable ? `
+                <div class="qty-ctrl visible" id="qc-${item.id}">
+                  <button class="qty-btn" onclick="app.changePreQty('${item.id}', -1)">−</button>
+                  <span class="qty-num" id="qn-${item.id}">0</span>
+                  <button class="qty-btn" onclick="app.changePreQty('${item.id}', 1)">+</button>
+                </div>
+                <button class="add-btn" onclick="app.addToCart('${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price})">+ Add</button>
+              ` : `
+                <button class="add-btn" style="background:rgba(208,96,96,0.1); border-color:rgba(208,96,96,0.3); color:#d06060; cursor:not-allowed;" disabled>Not Available</button>
+              `}
+            </div>
           </div>
         </div>
       </div>
@@ -55,57 +59,63 @@ class UIManager {
 
   createDrinkCard(drink) {
     const isAvailable = drink.stocks > 0;
+    const mediaHTML = drink.image 
+        ? `<img src="${drink.image}" class="menu-card-img" alt="${drink.name}" onerror="this.style.display='none'">` 
+        : `<div class="drink-icon">${drink.icon}</div>`;
+
     return `
       <div class="drink-card">
-        <div class="drink-icon">${drink.icon}</div>
-        <p class="drink-name">${drink.name}</p>
-        <p class="drink-desc">${drink.desc} <span style="color:var(--gold-light); display:block; font-size:11px; margin-top:4px;">${isAvailable ? `Available: ${drink.stocks}` : 'NOT AVAILABLE'}</span></p>
-        <p class="drink-price">₱${drink.price}</p>
-        
-        <div class="drink-options">
-          <div class="drink-opt-row">
-            <label>Temp</label>
-            <select id="temp-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
-              <option value="Hot">Hot</option>
-              <option value="Cold">Cold</option>
-            </select>
-          </div>
-          <div class="drink-opt-row">
-            <label>Size</label>
-            <select id="size-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
-              <option value="Regular">Regular</option>
-              <option value="Large">Large (+₱20)</option>
-            </select>
-          </div>
-          <div class="drink-opt-row">
-            <label>Sugar</label>
-            <select id="sugar-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
-              <option value="Regular">Regular</option>
-              <option value="50%">50%</option>
-              <option value="No sugar">No sugar</option>
-            </select>
-          </div>
-          <div class="drink-opt-row">
-            <label>Add-on</label>
-            <select id="addon-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
-              <option value="None">None</option>
-              <option value="Espresso Shot">Espresso Shot (+₱30)</option>
-              <option value="Oat Milk">Oat Milk (+₱30)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="drink-add-row">
-          ${isAvailable ? `
-            <div class="qty-ctrl visible" id="qc-${drink.id}">
-                <button class="qty-btn" onclick="app.changePreQty('${drink.id}', -1)">−</button>
-                <span class="qty-num" id="qn-${drink.id}">0</span>
-                <button class="qty-btn" onclick="app.changePreQty('${drink.id}', 1)">+</button>
+        ${mediaHTML}
+        <div class="drink-card-content">
+          <p class="drink-name">${drink.name}</p>
+          <p class="drink-desc">${drink.desc} <span style="color:var(--gold-light); display:block; font-size:11px; margin-top:4px;">${isAvailable ? `Available: ${drink.stocks}` : 'NOT AVAILABLE'}</span></p>
+          <p class="drink-price">₱${drink.price}</p>
+          
+          <div class="drink-options">
+            <div class="drink-opt-row">
+              <label>Temp</label>
+              <select id="temp-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
+                <option value="Hot">Hot</option>
+                <option value="Cold">Cold</option>
+              </select>
             </div>
-            <button class="add-btn" onclick="app.addDrinkToCart('${drink.id}', '${drink.name.replace(/'/g, "\\'")}', ${drink.price})">+ Add</button>
-          ` : `
-            <button class="add-btn" style="background:rgba(208,96,96,0.1); border-color:rgba(208,96,96,0.3); color:#d06060; width:100%; justify-content:center; cursor:not-allowed;" disabled>Not Available</button>
-          `}
+            <div class="drink-opt-row">
+              <label>Size</label>
+              <select id="size-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
+                <option value="Regular">Regular</option>
+                <option value="Large">Large (+₱20)</option>
+              </select>
+            </div>
+            <div class="drink-opt-row">
+              <label>Sugar</label>
+              <select id="sugar-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
+                <option value="Regular">Regular</option>
+                <option value="50%">50%</option>
+                <option value="No sugar">No sugar</option>
+              </select>
+            </div>
+            <div class="drink-opt-row">
+              <label>Add-on</label>
+              <select id="addon-${drink.id}" class="drink-select" ${!isAvailable ? 'disabled' : ''}>
+                <option value="None">None</option>
+                <option value="Espresso Shot">Espresso Shot (+₱30)</option>
+                <option value="Oat Milk">Oat Milk (+₱30)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="drink-add-row">
+            ${isAvailable ? `
+              <div class="qty-ctrl visible" id="qc-${drink.id}">
+                  <button class="qty-btn" onclick="app.changePreQty('${drink.id}', -1)">−</button>
+                  <span class="qty-num" id="qn-${drink.id}">0</span>
+                  <button class="qty-btn" onclick="app.changePreQty('${drink.id}', 1)">+</button>
+              </div>
+              <button class="add-btn" onclick="app.addDrinkToCart('${drink.id}', '${drink.name.replace(/'/g, "\\'")}', ${drink.price})">+ Add</button>
+            ` : `
+              <button class="add-btn" style="background:rgba(208,96,96,0.1); border-color:rgba(208,96,96,0.3); color:#d06060; width:100%; justify-content:center; cursor:not-allowed;" disabled>Not Available</button>
+            `}
+          </div>
         </div>
       </div>
     `;
@@ -116,7 +126,6 @@ class UIManager {
     const items = cart.getItems();
     const ids   = Object.keys(items);
 
-    // Calculate ready time here so the HTML template below can read it safely
     const readyDate = new Date(Date.now() + stats.estimatedTime * 60000);
     const readyTimeStr = readyDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -215,7 +224,6 @@ class UIManager {
       }
     }
 
-    // THIS IS THE PART THAT WAS BROKEN! (It is now safely inside the function)
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
       checkoutBtn.disabled = (ids.length === 0 || !selectedTableIds || selectedTableIds.length === 0);
@@ -227,7 +235,6 @@ class UIManager {
     }
   }
 
-  // Change selectedTableId to selectedTableIds array
   renderSeating(seatingManager, selectedTableIds) {
     const container = document.getElementById('floor-plan');
     if (!container) return;
@@ -243,43 +250,57 @@ class UIManager {
 
     const createTableHTML = (t) => {
       let statusClass = 'available';
-      if (t.isOccupied) statusClass = 'occupied';
-      else if (selectedTableIds && selectedTableIds.includes(t.id)) statusClass = 'selected';
+      
+      if (selectedTableIds && selectedTableIds.includes(t.id)) {
+        statusClass = 'selected';
+      } 
+      else if (t.isOccupied) {
+        statusClass = 'occupied';
+      }
 
       const label = t.type === 'small' ? `S${t.id.replace('t-s','')}`
                   : t.type === 'large' ? `L${t.id.replace('t-L','')}`
                   : `B${t.id.replace('b','')}`; 
 
-      const capacityIcon = t.type === 'bar' ? '' : `<span class="time-stamp" style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.3px;color:#6B7280;opacity:0.9;">×${t.capacity}</span>`;
+      const capacityIcon = t.type === 'bar' ? '' : `<span class="time-stamp" style="opacity:0.65;font-size:8px">👤×${t.capacity}</span>`;
 
       return `
         <div class="table-node table-${t.type} ${statusClass}"
              onclick="app.selectTable('${t.id}')"
              title="${statusClass === 'occupied' ? `Occupied for ${t.getOccupiedDurationString()}` : statusClass === 'selected' ? 'Your table' : `Available · ${t.capacity} seats`}">
           <span class="table-id">${label}</span>
-          ${t.isOccupied
+          ${t.isOccupied && statusClass !== 'selected'
             ? `<span class="time-stamp">${t.getOccupiedDurationString()}</span>`
-            : (selectedTableIds.includes(t.id) ? '' : capacityIcon)
+            : (statusClass === 'selected' ? '' : capacityIcon)
           }
         </div>`;
     };
 
     const statsBar = `
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:120px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#374151;font-weight:700;margin-bottom:6px;">Table Status</div>
-          <div style="display:flex;gap:0;border-radius:6px;overflow:hidden;height:8px;background:#F3F4F6;">
-            <div style="background:#16a34a;width:${Math.round(available/total*100)}%;transition:width 0.4s;border-radius:6px 0 0 6px;"></div>
-            <div style="background:#dc2626;width:${Math.round(occupied/total*100)}%;transition:width 0.4s;border-radius:0 6px 6px 0;"></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-family:'Outfit',sans-serif;flex-wrap:wrap;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#8B7355;font-weight:600;margin-bottom:3px;">Table Status</div>
+          <div style="display:flex;gap:3px;">
+            <div style="height:5px;border-radius:3px 0 0 3px;background:#7EA86A;width:${Math.round(available/total*100)}%;transition:width 0.4s;"></div>
+            <div style="height:5px;border-radius:0 3px 3px 0;background:#C96A40;width:${Math.round(occupied/total*100)}%;transition:width 0.4s;"></div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:10px;height:10px;border-radius:2px;background:#4ade80;border:1.5px solid #16a34a;flex-shrink:0;"></div>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:#166534;font-weight:700;white-space:nowrap;">${available} open</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:10px;height:10px;border-radius:2px;background:#fca5a5;border:1.5px solid #dc2626;flex-shrink:0;"></div>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:#991b1b;font-weight:700;white-space:nowrap;">${occupied} taken</span>
+        <div style="font-size:11px;color:#5E8A4C;font-weight:600;white-space:nowrap;">${available} open</div>
+        <div style="font-size:11px;color:#A84F28;font-weight:600;white-space:nowrap;">${occupied} taken</div>
+      </div>
+      
+      <div style="margin-bottom: 16px; display: flex; gap: 8px; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 0.5px solid var(--border);">
+        <label style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Table Actions:</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="manual-table-input" placeholder="e.g. S1, L2" class="form-input" style="width: 90px; padding: 6px 10px; font-size: 12px; background: var(--surface2);">
+          
+          <button class="add-btn" style="padding: 6px 12px;" onclick="app.selectManualTable(document.getElementById('manual-table-input').value)">
+             Add Order
+          </button>
+          
+          <button class="clear-btn" style="padding: 6px 12px; margin: 0; width: auto; font-size: 12px; border-color: rgba(208,96,96,0.4); color: #d06060;" onclick="app.freeManualTable(document.getElementById('manual-table-input').value)">
+             Clear Table
+          </button>
         </div>
       </div>`;
 
@@ -352,7 +373,6 @@ class UIManager {
     document.getElementById('oc-location').textContent = locationLine;
     document.getElementById('oc-total').textContent  = `₱${summary.total.toLocaleString()}`;
     
-    // FIX: Calculate time using summary.waitTime
     const readyDate = new Date(Date.now() + summary.waitTime * 60000);
     const readyTimeStr = readyDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -394,19 +414,16 @@ class UIManager {
           const items = Object.keys(o.items || {}).map(k => `${o.items[k].qty}× ${o.items[k].name || k}`).join('<br>');
           const ts = o.timestamp ? new Date(o.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
           
-          // Grab the exact ready time mapped in placeOrder
           const readyTime = o.readyAt ? o.readyAt.getTime() : (Date.now() + (o.prepTime || 15) * 60000);
 
           return `<div class="ql-item">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
                     <div>
                       <div class="ql-pos" style="color: var(--gold);">#${i+1} · Order</div>
-                      
                       <div class="ql-meta" style="margin-top:8px;">
                         <span class="live-countdown" data-ready="${readyTime}" data-pos="${i+1}" style="font-family:'Cormorant Garamond', serif; font-size:24px; font-weight:700; color:var(--gold-light);"></span>
                         <br><span style="opacity:0.5; font-size:10px;">Ordered at ${ts}</span>
                       </div>
-                      
                     </div>
                     <div>
                       <button id="q-btn-${i+1}" class="ql-item-cancel" onclick="app.cancelQueueAt(${i+1})">Cancel</button>
@@ -429,19 +446,13 @@ class UIManager {
       document.body.appendChild(modal);
     }
 
-    // Start the interval for all cards inside this modal
     this.startQueueTimers();
-
     modal.querySelector('.ql-close').addEventListener('click', () => this.hideQueueList());
   }
 
   startQueueTimers() {
-    // Clear any existing interval to prevent duplicates
     if (this.queueListInterval) clearInterval(this.queueListInterval);
-    
-    this.tickQueueTimers(); // Immediate initial render so it doesn't wait 1 sec to show
-    
-    // Tick every second for every card
+    this.tickQueueTimers(); 
     this.queueListInterval = setInterval(() => {
       this.tickQueueTimers();
     }, 1000);
@@ -453,15 +464,14 @@ class UIManager {
 
     timerEls.forEach(el => {
       const readyAt = parseInt(el.dataset.ready, 10);
-      const pos = el.dataset.pos; // Grab the position we added above
+      const pos = el.dataset.pos; 
       const remaining = readyAt - Date.now();
-      const btn = document.getElementById(`q-btn-${pos}`); // Find the matching button
+      const btn = document.getElementById(`q-btn-${pos}`); 
 
       if (remaining <= 0) {
         el.innerHTML = "✓ Ready to Pick Up/Serve";
         el.style.color = "var(--green-light)";
         
-        // Transform the Cancel button into a Received button
         if (btn && btn.textContent !== 'Received') {
           btn.textContent = 'Received';
           btn.className = 'ql-item-received';
@@ -480,20 +490,16 @@ class UIManager {
   hideQueueList() {
     const modal = document.getElementById('queue-list-modal');
     if (modal) modal.remove();
-    // Stop the timers when modal is closed to save memory
     if (this.queueListInterval) clearInterval(this.queueListInterval);
   }
-
-  // ─── PAYMENT UI METHODS ───
 
   showPaymentOptions() {
     const modal = document.getElementById('payment-modal');
     if (modal) modal.classList.add('open');
 
-    // Display Step 1 matrix options properly, hide the rest
     document.getElementById('payment-step-1').style.display = 'flex';
     document.getElementById('payment-step-2').style.display = 'none';
-    document.getElementById('payment-step-3').style.display = 'none'; // Clear step 3 visibility remnants
+    document.getElementById('payment-step-3').style.display = 'none'; 
     
     document.getElementById('payment-subtitle').textContent = "Select how you'd like to pay.";
     
@@ -505,10 +511,9 @@ class UIManager {
   }
 
   showQRPayment() {
-    // Display Step 2 QR layout options properly, hide the rest
     document.getElementById('payment-step-1').style.display = 'none';
     document.getElementById('payment-step-2').style.display = 'flex';
-    document.getElementById('payment-step-3').style.display = 'none'; // Clear step 3 visibility remnants
+    document.getElementById('payment-step-3').style.display = 'none'; 
     
     document.getElementById('payment-subtitle').textContent = "Scan QR to complete payment.";
     
@@ -525,23 +530,17 @@ class UIManager {
   }
 
   showCardForm() {
-    // Hide initial payment options matrix
     document.getElementById('payment-step-1').style.display = 'none';
-    // Hide QR Payment container if active
     document.getElementById('payment-step-2').style.display = 'none';
-    
-    // Reveal the hidden credit/debit card details form
     document.getElementById('payment-step-3').style.display = 'flex';
     document.getElementById('payment-subtitle').textContent = "Enter your card details.";
 
-    // FIX: Look at window.app.cart instead of this.cart so the UI can find the total
     const stats = window.app.cart ? window.app.cart.getTotals() : { total: 0 };
     const cardTotalSpan = document.getElementById('card-pay-total');
     if (cardTotalSpan) {
       cardTotalSpan.textContent = stats.total.toLocaleString();
     }
     
-    // Rewire back button functionality to return cleanly to step 1
     const backBtn = document.getElementById('payment-back-btn');
     if (backBtn) {
       backBtn.innerHTML = '← Back to Options';
@@ -550,7 +549,6 @@ class UIManager {
       };
     }
 
-    // Wire up card input validation after the form is visible in the DOM
     if (window.app) window.app.setupPaymentValidationListeners();
   }
 
@@ -558,7 +556,6 @@ class UIManager {
     const modal = document.getElementById('order-ready-modal');
     const msgEl = document.getElementById('order-ready-msg');
     if (!modal || !msgEl) return;
-    
     msgEl.textContent = msg;
     modal.classList.add('open');
     document.getElementById('overlay').classList.add('open');
@@ -568,5 +565,49 @@ class UIManager {
     const modal = document.getElementById('order-ready-modal');
     if (modal) modal.classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
+  }
+
+  showPrompt(title, message, inputType = 'text') {
+    return new Promise((resolve) => {
+      const modal = document.getElementById('custom-prompt-modal');
+      const titleEl = document.getElementById('cpm-title');
+      const msgEl = document.getElementById('cpm-message');
+      const inputEl = document.getElementById('cpm-input');
+      const confirmBtn = document.getElementById('cpm-confirm');
+      const cancelBtn = document.getElementById('cpm-cancel');
+
+      if (!modal) return resolve(null);
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      inputEl.type = inputType;
+      inputEl.value = '';
+
+      modal.classList.add('open');
+      
+      setTimeout(() => inputEl.focus(), 100);
+
+      const cleanup = () => {
+        modal.classList.remove('open');
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+        inputEl.onkeydown = null;
+      };
+
+      confirmBtn.onclick = () => {
+        const val = inputEl.value;
+        cleanup();
+        resolve(val);
+      };
+
+      cancelBtn.onclick = () => {
+        cleanup();
+        resolve(null);
+      };
+
+      inputEl.onkeydown = (e) => {
+        if (e.key === 'Enter') confirmBtn.click();
+      };
+    });
   }
 }

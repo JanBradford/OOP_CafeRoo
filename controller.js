@@ -46,7 +46,6 @@ class CafeController {
   setOrderType(type) {
     this.orderType = type; 
     if (type === 'pickup') {
-      // FIX: Cleanly sets the array so Proceed to Payment validates properly
       this.selectedTableIds = ['takeout']; 
     } else {
       this.selectedTableIds = []; 
@@ -133,15 +132,14 @@ class CafeController {
   // ─── SEATING ───
   selectTable(id) {
     const table = this.seating.getTables().find(t => t.id === id);
-    if (table.isOccupied) {
-      this.ui.showToast("This table is currently occupied.");
-      return;
-    }
     
     if (this.selectedTableIds.includes(id)) {
       this.selectedTableIds = this.selectedTableIds.filter(tId => tId !== id);
     } else {
       this.selectedTableIds.push(id);
+      if (table && table.isOccupied) {
+        this.ui.showToast("✓ Adding order to an existing occupied table.");
+      }
     }
 
     this.orderType = 'dine-in';
@@ -162,9 +160,35 @@ class CafeController {
     this.ui.showPaymentOptions();
   }
 
+  async decrementStockInFirebase(items) {
+    if (!window.firebaseDB || !window.dbMethods) return;
+    const db = window.firebaseDB;
+    const { doc, runTransaction } = window.dbMethods;
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        for (const id in items) {
+          const baseId = id.split('-')[0];
+          const itemRef = doc(db, "products", baseId);
+          const itemDoc = await transaction.get(itemRef);
+          
+          if (itemDoc.exists()) {
+            const currentStocks = itemDoc.data().stocks || 0;
+            const newStocks = Math.max(0, currentStocks - items[id].qty);
+            transaction.update(itemRef, { stocks: newStocks });
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Stock update failed: ", error);
+    }
+  }
+
   placeOrder(paymentMethod) {
     if (Object.keys(this.cart.getItems()).length === 0) return; 
     if (this.selectedTableIds.length === 0) return;
+
+    this.decrementStockInFirebase(this.cart.getItems());
 
     const stats = this.cart.getTotals();
     const waitTime = this.queue.getEstimatedWait(this.queue.getLength() + 1, stats.estimatedTime);
@@ -184,7 +208,12 @@ class CafeController {
     const queuePosition = this.queue.addOrder(newOrder); 
 
     if (!this.selectedTableIds.includes('takeout')) {
-      this.selectedTableIds.forEach(id => this.seating.toggleTableStatus(id));
+      this.selectedTableIds.forEach(id => {
+        const table = this.seating.getTables().find(t => t.id === id);
+        if (table && !table.isOccupied) {
+          table.occupy();
+        }
+      });
     }
 
     const orderSummary = {
@@ -318,23 +347,12 @@ class CafeController {
       clearTimeout(orderToComplete.timeoutId);
     }
 
-    // Free up the tables since the customer has received their food
-    if (orderToComplete && orderToComplete.tableIds && orderToComplete.type !== 'pickup') {
-      orderToComplete.tableIds.forEach(id => {
-        const table = this.seating.getTables().find(t => t.id === id);
-        if (table && table.isOccupied) table.free(); 
-      });
-    }
-
-    // Remove from the active queue
     this.queue.orders.splice(idx, 1);
-    
-    // Refresh the UI
     this.updateCartView();
     this.ui.showQueueList(); 
-    this.ui.showToast(`🎉 Order #${position} completed! Table cleared.`);
+    this.ui.showToast(`🎉 Order #${position} completed!`); 
   }
-
+  
   setupPaymentValidationListeners() {
     const cardName = document.getElementById('card-name');
     const cardNumber = document.getElementById('card-number');
@@ -366,9 +384,93 @@ class CafeController {
 
     validateForm();
   }
-}
 
-// Instantiate App
+  selectManualTable(label) { 
+    if (!label) return;
+    const formatted = label.trim().toLowerCase();
+    let tableId = null;
+
+    if (formatted.startsWith('s')) tableId = 't-s' + formatted.slice(1);
+    else if (formatted.startsWith('l')) tableId = 't-l' + formatted.slice(1);
+    else if (formatted.startsWith('b')) tableId = 'b' + formatted.slice(1);
+    else tableId = formatted;
+
+    const table = this.seating.getTables().find(t => t.id.toLowerCase() === tableId);
+
+    if (!table) {
+      this.ui.showToast(`⚠️ Table ${label.toUpperCase()} not found. Use S1, L2, B3 etc.`);
+      return;
+    }
+
+    if (!this.selectedTableIds.includes(table.id)) {
+      this.selectedTableIds.push(table.id);
+    }
+
+    this.orderType = 'dine-in';
+    this.updateCartView();
+    this.ui.showToast(`✓ Table ${label.toUpperCase()} selected for add-on order.`);
+    
+    const inputEl = document.getElementById('manual-table-input');
+    if (inputEl) inputEl.value = '';
+  }
+
+  async freeManualTable(label) {
+    if (!label || label.trim() === '') {
+      label = await this.ui.showPrompt(
+        "Clear Table", 
+        "Which table would you like to clear? (e.g., S1, L2, B3)"
+      );
+    }
+
+    if (!label) return;
+
+    const formatted = label.trim().toLowerCase();
+    let tableId = null;
+
+    if (formatted.startsWith('s')) tableId = 't-s' + formatted.slice(1);
+    else if (formatted.startsWith('l')) tableId = 't-l' + formatted.slice(1);
+    else if (formatted.startsWith('b')) tableId = 'b' + formatted.slice(1);
+    else tableId = formatted;
+
+    const table = this.seating.getTables().find(t => t.id.toLowerCase() === tableId);
+
+    if (!table) {
+      this.ui.showToast(`⚠️ Table ${label.toUpperCase()} not found.`);
+      return;
+    }
+
+    if (!table.isOccupied) {
+      this.ui.showToast(`Table ${label.toUpperCase()} is already empty.`);
+      return;
+    }
+
+    const passcode = await this.ui.showPrompt(
+      "Admin Access", 
+      `Enter security code to clear Table ${label.toUpperCase()}`,
+      "password"
+    );
+    
+    if (passcode !== "ClarkPogi") {
+      if (passcode !== null) { 
+        this.ui.showToast("❌ Incorrect security code. Action denied.");
+      }
+      return; 
+    }
+
+    table.free();
+
+    if (this.selectedTableIds.includes(table.id)) {
+      this.selectedTableIds = this.selectedTableIds.filter(tId => tId !== table.id);
+    }
+
+    this.updateCartView();
+    this.ui.showToast(`🧹 Table ${label.toUpperCase()} has been cleared.`);
+    
+    const inputEl = document.getElementById('manual-table-input');
+    if (inputEl) inputEl.value = '';
+  }
+} 
+
 const app = new CafeController();
 window.app = app;
 
@@ -396,6 +498,4 @@ window.closeCart = () => app.ui.toggleCart(false);
 window.clearCart = () => app.cart.clear();
 window.proceedToPayment = () => app.proceedToPayment();
 window.placeOrder = (method) => app.placeOrder(method);
-
-// FIX: This binding was missing! This connects the time dropdown to your logic.
 window.setPickupTime = (time) => app.setPickupTime(time);

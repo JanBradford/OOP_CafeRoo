@@ -20,49 +20,50 @@ class Observable {
 // ==========================================
 class MenuCatalog {
   constructor() {
-    // Dynamic container tracking special card items
-    this.specialItem = { id: 'special-item', name: "Scrambled Eggs", price: 285, stocks: 5 };
+    this.specialItem = { id: 'special-item', name: "Truffle Scrambled Eggs", price: 285, stocks: 5, image: 'special.jpg' };
 
     this.categories = {
       breakfast: [
-        new FoodItem('b1', "Roo's Big Breakfast", 395, "Two eggs any style, bacon rashers, grilled tomato...", ['popular'], 10),
-        new FoodItem('b2', "Avocado Toast", 280, "Smashed avo, feta, cherry tomatoes...", ['vegan'], 5),
-        new FoodItem('b3', "Eggs Benedict", 320, "Two poached eggs, smoked ham, hollandaise...", ['popular'], 8)
+        new FoodItem('b1', "Roo's Big Breakfast", 395, "Two eggs any style, bacon rashers, grilled tomato...", ['popular'], 10, 'b1.jpg'),
+        new FoodItem('b2', "Avocado Toast", 280, "Smashed avo, feta, cherry tomatoes...", ['vegan'], 5, 'b2.jpg'),
+        new FoodItem('b3', "Eggs Benedict", 320, "Two poached eggs, smoked ham, hollandaise...", ['popular'], 8, 'b3.jpg')
       ],
       allday: [
-        new FoodItem('a1', "Roo Burger", 445, "Wagyu beef patty, aged cheddar...", ['popular'], 12),
-        new FoodItem('a4', "Truffle Fries", 195, "Crispy skin-on fries tossed in truffle oil...", ['popular'], 20)
+        new FoodItem('a1', "Roo Burger", 445, "Wagyu beef patty, aged cheddar...", ['popular'], 12, 'a1.jpg'),
+        new FoodItem('a4', "Truffle Fries", 195, "Crispy skin-on fries tossed in truffle oil...", ['popular'], 20, 'a4.jpg')
       ],
       mains: [
-        new FoodItem('m1', "Seared Salmon", 585, "Pan-seared Atlantic salmon, lemon caper butter...", ['new'], 6),
-        new FoodItem('m3', "Mushroom Risotto", 395, "Arborio rice, wild mushroom medley...", ['vegan', 'popular'], 7)
+        new FoodItem('m1', "Seared Salmon", 585, "Pan-seared Atlantic salmon, lemon caper butter...", ['new'], 6, 'm1.jpg'),
+        new FoodItem('m3', "Mushroom Risotto", 395, "Arborio rice, wild mushroom medley...", ['vegan', 'popular'], 7, 'm3.jpg')
       ],
       sweets: [
-        new FoodItem('s1', "Burnt Basque Cheesecake", 195, "Creamy, caramelized top, slightly custardy...", ['popular'], 15),
-        new FoodItem('s3', "Croissant (Plain / Almond)", 120, "Buttery, flaky layers...", [], 10)
+        new FoodItem('s1', "Burnt Basque Cheesecake", 195, "Creamy, caramelized top, slightly custardy...", ['popular'], 15, 's1.jpg'),
+        new FoodItem('s3', "Croissant (Plain / Almond)", 120, "Buttery, flaky layers...", [], 10, 's3.jpg')
       ],
       drinks: [
-        new DrinkItem('d1', "Americano", 115, "Rich espresso diluted with hot or cold water for a smooth, robust finish.", "☕", 50),
-        new DrinkItem('d4', "Latte", 175, "Smooth espresso balanced with steamed milk and a light layer of foam.", "☕", 50),
-        new DrinkItem('d5', "Matcha Latte", 185, "Ceremonial grade matcha, steamed milk.", "🍵", 50)
+        new DrinkItem('d1', "Espresso", 100, "Rich, concentrated shot of coffee.", "☕", 50, 'd1.jpg'),
+        new DrinkItem('d4', "Latte", 175, "Smooth espresso balanced with steamed milk and a light layer of foam.", "☕", 50, 'd4.jpg'),
+        new DrinkItem('d5', "Matcha Latte", 185, "Ceremonial grade matcha, steamed milk.", "🍵", 50, 'd5.jpg')
       ]
     };
   }
 
-  // FIXED: Added cloud mapping handler that forces UI re-renders on stock changes
   updateFromCloud(newMenu) {
     Object.keys(this.categories).forEach(cat => {
       if (newMenu[cat] && newMenu[cat].length > 0) {
-        this.categories[cat] = newMenu[cat];
+        this.categories[cat] = newMenu[cat].map(data => {
+          if (cat === 'drinks') {
+            return new DrinkItem(data.id, data.name, data.price, data.desc, data.icon, data.stocks, data.image);
+          }
+          return new FoodItem(data.id, data.name, data.price, data.desc, data.tags, data.stocks, data.image);
+        });
       }
     });
-    // Trigger immediate UI rendering to show live stock metrics
     if (window.app && window.app.ui) {
       window.app.ui.renderMenu(this);
     }
   }
 
-  // FIXED: Added real-time layout adjustment engine for hardcoded special cards
   updateSpecialItem(stocksCount) {
     this.specialItem.stocks = stocksCount;
     const btn = document.getElementById('special-add-btn');
